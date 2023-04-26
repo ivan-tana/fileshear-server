@@ -3,7 +3,6 @@
 from flask import Flask
 from src.app.folder import folder as folder_blueprint
 from .extensions import database
-from src.app.models.Folder import Folder
 
 
 def create_app(config_file: str = "config_flask_app.py") -> Flask:
