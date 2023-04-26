@@ -61,5 +61,9 @@ class Folder(Resource):
 
             # return a dictionary with the file names in the folder
             return {
-                'path': [file.name for file in new_folder.all_files]
+                'message': "success"
             }
+        return {
+            "message": "Failed to add folder"
+        }, 400
+

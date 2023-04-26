@@ -11,7 +11,7 @@ This method creates a new folder in the database and returns the names of the fi
 ### Parameters
 - path: a string argument that specifies the path of the folder to be created
 ### Returns
-a dictionary with a key ‘path’ and a value that is a list of file names in the folder
+a success message if the folder was added amd failed if not
 ## get
 This method queries all the folders in the database and returns a dictionary with their information.
 
