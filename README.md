@@ -2,17 +2,17 @@
 
 # fileshear-server
 
-##Folder API Resource
+## Folder API Resource
 This is an API resource class that handles the creation and retrieval of folders in the database. It has two methods: post and get.
 
-##post
+## post
 This method creates a new folder in the database and returns the names of the files in it.
 
 ### Parameters
 - path: a string argument that specifies the path of the folder to be created
 ### Returns
 a dictionary with a key ‘path’ and a value that is a list of file names in the folder
-##get
+## get
 This method queries all the folders in the database and returns a dictionary with their information.
 
 Parameters
