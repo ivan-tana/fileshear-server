@@ -1,6 +1,8 @@
 from flask import Blueprint
 from flask_restful import Api
 from . import resources
+from . import models
+
 
 folder = Blueprint(
     name="folder",
