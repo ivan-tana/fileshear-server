@@ -45,6 +45,12 @@ class Folder:
         all_files: A list of File objects that contain
          all the files in the folder and its sub-folders.
         name: the folder name and suffix
+
+    Raises
+    ------
+    FileExistsError
+        If the path does not exist.
+
     """
 
     def __init__(self, path: Path, allowed_extensions: list[str] = None) -> None:
@@ -57,6 +63,8 @@ class Folder:
              the file extensions that are allowed in the folder and its sub-folders. If None, all extensions are allowed. Defaults to None.
         """
         self.path = path
+        if not self.path.exists():
+            raise FileExistsError
         self.name = self.path.name
         self.folders = list_folders(self.path, allowed_extensions)
         self.files = list_files(self.path, allowed_extensions)
