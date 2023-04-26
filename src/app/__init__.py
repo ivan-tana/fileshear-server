@@ -1,7 +1,7 @@
 """ main module """
 
 from flask import Flask
-from src.app.folder import folder as folder_blueprint
+from .folder import folder as folder_blueprint
 from .extensions import database
 
 

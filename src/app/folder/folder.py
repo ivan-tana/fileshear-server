@@ -31,6 +31,14 @@ class File:
         """
         return self.path.name
 
+    @property
+    def dict(self):
+        return {
+            "name": self.name,
+            "path": str(self.path),
+            "suffix": self.path.suffix
+        }
+
 
 class Folder:
     """A class that represents a folder in the file system.
@@ -66,8 +74,9 @@ class Folder:
         if not self.path.exists():
             raise FileExistsError
         self.name = self.path.name
-        self.folders = list_folders(self.path, allowed_extensions)
-        self.files = list_files(self.path, allowed_extensions)
+        self.allowed_extensions = allowed_extensions
+        self.folders = list_folders(self.path, self.allowed_extensions)
+        self.files = list_files(self.path, self.allowed_extensions)
         self.all_files = all_folder_files(self)
 
     def __repr__(self):
@@ -103,12 +112,22 @@ class Folder:
         result = []
         for file in self.all_files:
             if (
-                term.lower() in file.name.lower()
-                or file.name.lower().startswith(term.lower())
-                or file.name.lower().endswith(term.lower())
+                    term.lower() in file.name.lower()
+                    or file.name.lower().startswith(term.lower())
+                    or file.name.lower().endswith(term.lower())
             ):
                 result.append(file)
         return result
+
+    @property
+    def dict(self):
+        return {
+            "name": self.name,
+            "files": [file.dict for file in self.files],
+            "all_files": [file.dict for file in self.all_files],
+            "folders": [folder_instance.dict for folder_instance in self.folders],
+            "allowed_extension": self.allowed_extensions
+        }
 
 
 def list_folders(path: Path, allowed_extension: list[str]) -> list[Folder]:
@@ -126,9 +145,9 @@ def list_folders(path: Path, allowed_extension: list[str]) -> list[Folder]:
 
     folder_list = []
     for (
-        path,
-        folders,
-        files,
+            path,
+            folders,
+            files,
     ) in os.walk(path):
         [
             folder_list.append({"name": folder_item, "path": path})
@@ -192,13 +211,11 @@ def list_files(path: Path, allowed_extensions: list[str] = None) -> list[File]:
 
     for file in path.iterdir():  # use iterdir instead of listdir for better performance
         if file.is_file() and (
-            allowed_extensions is None or file.suffix in allowed_extensions
+                allowed_extensions is None or file.suffix in allowed_extensions
         ):
             file_list.append(File(file))
 
     return file_list
 
 
-folder = Folder(Path("E:/files/Pictures/Camera Roll"))
 
-[print(file) for file in folder.all_files]

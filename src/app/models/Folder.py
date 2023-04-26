@@ -1,5 +1,5 @@
-from src.app.extensions import database
-from src.app.folder.folder import Folder as Folder_Class
+from app.extensions import database
+from app.folder.folder import Folder as Folder_Class
 from pathlib import Path
 
 
@@ -26,4 +26,18 @@ class Folder(database.Model):
     @property
     def all_files(self):
         return self.data.all_files
+
+    @property
+    def allowed_extensions(self):
+        return  self.data.allowed_extensions
+
+    @property
+    def dict(self):
+        return {
+            "name": self.name,
+            "files": [file.dict for file in self.files],
+            "all_files": [file.dict for file in self.all_files],
+            "folders": [folder_instance.dict for folder_instance in self.folders],
+            "allowed_extension": self.allowed_extensions
+        }
 

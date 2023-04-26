@@ -1,12 +1,18 @@
 from flask_restful import Resource, reqparse
 from pathlib import Path
-from src.app.models.Folder import Folder as FolderM
-from src.app.extensions import database
+from app.models.Folder import Folder as FolderM
+from app.extensions import database
 
 
 class Folder(Resource):
     def get(self):
-        return {"message": "Folder"}
+        folders = FolderM.query.all()
+
+        context = {
+            "count": len(folders),
+            "folders": [folder_instance.dict for folder_instance in folders]
+        }
+        return context
 
     def post(self):
         folder_pars = reqparse.RequestParser()
