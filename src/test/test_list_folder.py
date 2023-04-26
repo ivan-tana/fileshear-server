@@ -1,4 +1,4 @@
-from folder.folder import Folder, list_folders
+from src.app.folder.folder import Folder, list_folders
 import pytest
 from pathlib import Path
 from typing import List
