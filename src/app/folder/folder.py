@@ -1,4 +1,5 @@
 from pathlib import Path
+from flask import url_for
 import os
 
 
@@ -21,6 +22,7 @@ class File:
         """
         self.path = path
         self.name = self.path.name
+        self.icon = get_icon(self.path.suffix)
 
     def __repr__(self) -> str:
         """Returns a string representation of the File object.
@@ -32,11 +34,26 @@ class File:
         return self.path.name
 
     @property
+    def size(self):
+        """file size in byte"""
+        size = os.stat(self.path).st_size / (1024 * 1024)
+        if size > 1000:
+            size = str(round(size / 1000, 2)) + " GB"
+        elif size > 1:
+            size = str(round(size, 2)) + " MB"
+        else:
+            size = str(round(size * 1000, 4)) + " kb"
+
+        return size
+
+    @property
     def dict(self):
         return {
             "name": self.name,
             "path": str(self.path),
-            "suffix": self.path.suffix
+            "suffix": self.path.suffix,
+            "icon": self.icon,
+            "size": self.size
         }
 
 
@@ -218,4 +235,7 @@ def list_files(path: Path, allowed_extensions: list[str] = None) -> list[File]:
     return file_list
 
 
-
+# get file icon base on suffix
+def get_icon(file_suffix: str):
+    file_suffix = file_suffix.replace('.', '').lower()
+    return url_for('get_resources.icon', suffix=file_suffix)

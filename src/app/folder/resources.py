@@ -64,6 +64,17 @@ class Folder(Resource):
                 'message': "success"
             }
         return {
-            "message": "Failed to add folder"
+                   "message": "Failed to add folder"
+               }, 400
+
+
+class SingleFolder(Resource):
+    def get(self, folder_id):
+        folder = FolderM.query.get(folder_id)
+        if folder:
+            return folder.dict
+        return {
+            "message": "folder not found"
         }, 400
+
 
