@@ -21,8 +21,10 @@ class File:
              the absolute or relative path of the file.
         """
         self.path = path
+        self.parent = path.parent
         self.name = self.path.name
         self.icon = get_icon(self.path.suffix)
+        self.uid = str(hex(int(hash(str(self.path))))).replace('-', 'n')
 
     def __repr__(self) -> str:
         """Returns a string representation of the File object.
@@ -42,7 +44,7 @@ class File:
         elif size > 1:
             size = str(round(size, 2)) + " MB"
         else:
-            size = str(round(size * 1000, 4)) + " kb"
+            size = str(round(size * 1000, 2)) + " kb"
 
         return size
 
@@ -53,7 +55,8 @@ class File:
             "path": str(self.path),
             "suffix": self.path.suffix,
             "icon": self.icon,
-            "size": self.size
+            "size": self.size,
+            "uid": self.uid
         }
 
 
@@ -135,6 +138,13 @@ class Folder:
             ):
                 result.append(file)
         return result
+
+    def get_file_by_uid(self, uid: str):
+        for file in self.all_files:
+            if file.uid == uid:
+
+                return file
+        return None
 
     @property
     def dict(self):

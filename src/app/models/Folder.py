@@ -41,3 +41,6 @@ class Folder(database.Model):
             "allowed_extension": self.allowed_extensions
         }
 
+    def get_file_by_uid(self, uid):
+        return self.data.get_file_by_uid(uid)
+
