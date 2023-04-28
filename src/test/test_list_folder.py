@@ -1,11 +1,30 @@
-from src.app.folder.folder import Folder, list_folders
+from app.folder.folder import Folder, list_folders
 import pytest
+from app import create_app
 from pathlib import Path
 from typing import List
 
 
-def test_list_folders(tmpdir: Path):
-    # Create a temporary directory structure
+@pytest.fixture()
+def app():
+    app = create_app()
+    app.config.update(
+        {
+            "TESTING": True,
+        }
+    )
+
+    # other setup can go here
+
+    yield app
+
+    # clean up / reset resources here
+
+@pytest.fixture()
+def test_list_folders(app, tmpdir: Path):
+
+# Create a temporary directory structure
+
     tmpdir.mkdir("folder1").join("file1.txt").write("content")
     tmpdir.mkdir("folder2").join("file2.txt").write("content")
     tmpdir.mkdir("folder3").join("file3.txt").write("content")

@@ -12,9 +12,9 @@ def search_term(term: str, file_list: list) -> list:
     result = []
     for file in file_list:
         if (
-                term.lower() in file.name.lower()
-                or file.name.lower().startswith(term.lower())
-                or file.name.lower().endswith(term.lower())
+            term.lower() in file.name.lower()
+            or file.name.lower().startswith(term.lower())
+            or file.name.lower().endswith(term.lower())
         ):
             result.append(file)
     return result

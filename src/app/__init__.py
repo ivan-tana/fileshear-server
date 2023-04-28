@@ -6,10 +6,7 @@ from .get_resources import get_resources as get_resources_blueprint
 from .extensions import database
 
 # blueprints
-blueprints = [
-    get_resources_blueprint,
-    folder_blueprint
-]
+blueprints = [get_resources_blueprint, folder_blueprint]
 
 
 def create_app(config_file: str = "config_flask_app.py") -> Flask:

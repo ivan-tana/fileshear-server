@@ -1,5 +1,5 @@
 import pytest
-from src.app import create_app
+from app import create_app
 
 
 @pytest.fixture()
@@ -29,5 +29,5 @@ def runner(app):
 
 
 def test_request_example(client):
-    response = client.get("/folder/")
+    response = client.get("/api/folder")
     assert response.status_code == 200

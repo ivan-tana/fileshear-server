@@ -25,7 +25,7 @@ class File:
         self.parent = path.parent
         self.name = self.path.name
         self.icon = get_icon(self.path.suffix)
-        self.uid = str(hex(int(hash(str(self.path))))).replace('-', 'n')
+        self.uid = str(hex(int(hash(str(self.path))))).replace("-", "n")
 
     def __repr__(self) -> str:
         """Returns a string representation of the File object.
@@ -57,7 +57,7 @@ class File:
             "suffix": self.path.suffix,
             "icon": self.icon,
             "size": self.size,
-            "uid": self.uid
+            "uid": self.uid,
         }
 
 
@@ -146,7 +146,7 @@ class Folder:
             "files": [file.dict for file in self.files],
             "all_files": [file.dict for file in self.all_files],
             "folders": [folder_instance.dict for folder_instance in self.folders],
-            "allowed_extension": self.allowed_extensions
+            "allowed_extension": self.allowed_extensions,
         }
 
 
@@ -165,9 +165,9 @@ def list_folders(path: Path, allowed_extension: list[str]) -> list[Folder]:
 
     folder_list = []
     for (
-            path,
-            folders,
-            files,
+        path,
+        folders,
+        files,
     ) in os.walk(path):
         [
             folder_list.append({"name": folder_item, "path": path})
@@ -231,7 +231,7 @@ def list_files(path: Path, allowed_extensions: list[str] = None) -> list[File]:
 
     for file in path.iterdir():  # use iterdir instead of listdir for better performance
         if file.is_file() and (
-                allowed_extensions is None or file.suffix in allowed_extensions
+            allowed_extensions is None or file.suffix in allowed_extensions
         ):
             file_list.append(File(file))
 
@@ -240,5 +240,5 @@ def list_files(path: Path, allowed_extensions: list[str] = None) -> list[File]:
 
 # get file icon base on suffix
 def get_icon(file_suffix: str):
-    file_suffix = file_suffix.replace('.', '').lower()
-    return url_for('get_resources.icon', suffix=file_suffix)
+    file_suffix = file_suffix.replace(".", "").lower()
+    return url_for("get_resources.icon", suffix=file_suffix)

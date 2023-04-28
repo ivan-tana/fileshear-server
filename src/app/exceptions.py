@@ -1,4 +1,2 @@
-
-
 class InvalidPassword(ValueError):
     pass

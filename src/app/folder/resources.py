@@ -30,7 +30,7 @@ class Folder(Resource):
 
         context = {
             "count": len(folders),
-            "folders": [folder_instance.dict for folder_instance in folders]
+            "folders": [folder_instance.dict for folder_instance in folders],
         }
         return context
 
@@ -47,13 +47,13 @@ class Folder(Resource):
         """
         # create a parser object to parse the path argument
         folder_pars = reqparse.RequestParser()
-        folder_pars.add_argument('path')
-        folder_pars.add_argument('collection_id')
+        folder_pars.add_argument("path")
+        folder_pars.add_argument("collection_id")
         args = folder_pars.parse_args()
 
         # convert the path argument to a Path object
-        path = Path(args['path'])
-        collection = CollectionM.query.get(args['collection_id'])
+        path = Path(args["path"])
+        collection = CollectionM.query.get(args["collection_id"])
         # check if the path exists
         if path.exists() and collection:
             # create a FolderM object with the path as an attribute
@@ -64,12 +64,8 @@ class Folder(Resource):
             database.session.commit()
 
             # return a dictionary with the file names in the folder
-            return {
-                'message': "success"
-            }
-        return {
-                   "message": "Failed to add folder"
-               }, 400
+            return {"message": "success"}
+        return {"message": "Failed to add folder"}, 400
 
 
 class SingleFolder(Resource):
@@ -77,9 +73,7 @@ class SingleFolder(Resource):
         folder = FolderM.query.get(folder_id)
         if folder:
             return folder.dict
-        return {
-            "message": "folder not found"
-        }, 400
+        return {"message": "folder not found"}, 400
 
     def delete(self, folder_id):
         """
@@ -89,12 +83,8 @@ class SingleFolder(Resource):
         if folder_instance:
             database.session.delete(folder_instance)
             database.session.commit()
-            return {
-                "message": "folder deleted"
-            }
-        return {
-            "message": "folder dose not exist"
-        }
+            return {"message": "folder deleted"}
+        return {"message": "folder dose not exist"}
 
 
 class Collection(Resource):
@@ -107,19 +97,29 @@ class Collection(Resource):
 
     def post(self):
         collection_parser = reqparse.RequestParser()
-        collection_parser.add_argument('name', required=True, help="name invalid", type=str)
-        collection_parser.add_argument('type', required=True, help="type invalid", type=int)
-        collection_parser.add_argument('thumbnail', required=False, help="thumbnail invalid", type=str)
-        collection_parser.add_argument('public', required=False, help="public invalid", type=bool)
-        collection_parser.add_argument('password', required=False, help="password invalid", type=str)
+        collection_parser.add_argument(
+            "name", required=True, help="name invalid", type=str
+        )
+        collection_parser.add_argument(
+            "type", required=True, help="type invalid", type=int
+        )
+        collection_parser.add_argument(
+            "thumbnail", required=False, help="thumbnail invalid", type=str
+        )
+        collection_parser.add_argument(
+            "public", required=False, help="public invalid", type=bool
+        )
+        collection_parser.add_argument(
+            "password", required=False, help="password invalid", type=str
+        )
 
         args = collection_parser.parse_args()
 
-        name = args['name']
-        file_type = args['type']
-        thumbnail = args['thumbnail'] | None
-        public = args['public'] | False
-        password = args['password'] | DEFUALT_PASSWORD
+        name = args["name"]
+        file_type = args["type"]
+        thumbnail = args["thumbnail"] | None
+        public = args["public"] | False
+        password = args["password"] | DEFUALT_PASSWORD
 
         new_collection = CollectionM(
             name=name,
@@ -133,6 +133,3 @@ class Collection(Resource):
         database.session.commit()
 
         return {"message": "collection Created"}
-
-
-

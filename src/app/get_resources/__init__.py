@@ -6,19 +6,19 @@ get_resources = Blueprint(
     name="get_resources",
     import_name=__name__,
     url_prefix="/get/resource",
-    static_folder='static'
+    static_folder="static",
 )
 
 PATH_TO_ICONS = str(Path(get_resources.root_path + "\\static\\icons\\"))
 
 
-@get_resources.route('/icons/<suffix>')
+@get_resources.route("/icons/<suffix>")
 def icon(suffix):
     # get icon file
-    return send_from_directory(PATH_TO_ICONS, f'{suffix}.ico')
+    return send_from_directory(PATH_TO_ICONS, f"{suffix}.ico")
 
 
-@get_resources.route('/file/<folder_id>/<uid>')
+@get_resources.route("/file/<folder_id>/<uid>")
 def file(folder_id, uid):
     folder_instance: Folder = Folder.query.get(folder_id)
     if folder_instance:

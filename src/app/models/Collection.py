@@ -3,6 +3,7 @@ from app.const import FileType, DEFUALT_PASSWORD
 from app.functions import search_term
 from app.exceptions import InvalidPassword
 
+
 class Collection(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     password = database.Column(database.Text, default=DEFUALT_PASSWORD)
@@ -10,7 +11,7 @@ class Collection(database.Model):
     name = database.Column(database.String(30), nullable=False)
     type = database.Column(database.Enum(FileType), nullable=False)
     public = database.Column(database.Boolean(), default=False)
-    folders = database.relationship('Folder', backref='collection', lazy=True)
+    folders = database.relationship("Folder", backref="collection", lazy=True)
 
     @property
     def all_files(self):
@@ -45,4 +46,3 @@ class Collection(database.Model):
     def update_thumbnail(self, thumbnail: str):
         """update thumbnail"""
         self.thumbnail = thumbnail
-
