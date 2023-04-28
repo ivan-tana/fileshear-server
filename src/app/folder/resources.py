@@ -77,4 +77,19 @@ class SingleFolder(Resource):
             "message": "folder not found"
         }, 400
 
+    def delete(self, folder_id):
+        """
+        delete folder
+        """
+        folder_instance = FolderM.query.get(folder_id)
+        if folder_instance:
+            database.session.delete(folder_instance)
+            database.session.commit()
+            return {
+                "message": "folder deleted"
+            }
+        return {
+            "message": "folder dose not exist"
+        }
+
 
