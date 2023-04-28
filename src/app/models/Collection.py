@@ -32,8 +32,17 @@ class Collection(database.Model):
             "folders": [folder_instance.dict for folder_instance in self.folders],
         }
 
-    def change_password(self, current_password, new_password):
+    def change_password(self, current_password: str, new_password: str):
         if current_password == self.password:
             self.password = new_password
             return
         raise InvalidPassword("The current password is invalid")
+
+    def toggle_access_type(self):
+        """toggle access type"""
+        self.public = not self.public
+
+    def update_thumbnail(self, thumbnail: str):
+        """update thumbnail"""
+        self.thumbnail = thumbnail
+
