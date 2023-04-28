@@ -39,7 +39,9 @@ class Folder(database.Model):
             "files": [file.dict for file in self.files],
             "all_files": [file.dict for file in self.all_files],
             "folders": [folder_instance.dict for folder_instance in self.folders],
-            "allowed_extension": self.allowed_extensions
+            "allowed_extension": self.allowed_extensions,
+            "collection_id": self.collection_id,
+            "id": self.id
         }
 
     def get_file_by_uid(self, uid):

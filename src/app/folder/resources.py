@@ -1,7 +1,9 @@
 from flask_restful import Resource, reqparse
 from pathlib import Path
 from app.models.Folder import Folder as FolderM
+from app.models.Collection import Collection as CollectionM
 from app.extensions import database
+from app.const import FileType, DEFUALT_PASSWORD
 
 
 class Folder(Resource):
@@ -46,12 +48,14 @@ class Folder(Resource):
         # create a parser object to parse the path argument
         folder_pars = reqparse.RequestParser()
         folder_pars.add_argument('path')
+        folder_pars.add_argument('collection_id')
         args = folder_pars.parse_args()
 
         # convert the path argument to a Path object
         path = Path(args['path'])
+        collection = CollectionM.query.get(args['collection_id'])
         # check if the path exists
-        if path.exists():
+        if path.exists() and collection:
             # create a FolderM object with the path as an attribute
             new_folder = FolderM(path=str(path))
             # add the folder to the database session
@@ -91,5 +95,44 @@ class SingleFolder(Resource):
         return {
             "message": "folder dose not exist"
         }
+
+
+class Collection(Resource):
+    def get(self):
+        results = []
+        collections = CollectionM.query.all()
+        for collection_instance in collections:
+            results.append(collection_instance.dict)
+        return results
+
+    def post(self):
+        collection_parser = reqparse.RequestParser()
+        collection_parser.add_argument('name', required=True, help="name invalid", type=str)
+        collection_parser.add_argument('type', required=True, help="type invalid", type=int)
+        collection_parser.add_argument('thumbnail', required=False, help="thumbnail invalid", type=str)
+        collection_parser.add_argument('public', required=False, help="public invalid", type=bool)
+        collection_parser.add_argument('password', required=False, help="password invalid", type=str)
+
+        args = collection_parser.parse_args()
+
+        name = args['name']
+        file_type = args['type']
+        thumbnail = args['thumbnail'] | None
+        public = args['public'] | False
+        password = args['password'] | DEFUALT_PASSWORD
+
+        new_collection = CollectionM(
+            name=name,
+            type=FileType(file_type),
+            thumbnail=thumbnail,
+            public=public,
+            password=password,
+        )
+
+        database.session.add(new_collection)
+        database.session.commit()
+
+        return {"message": "collection Created"}
+
 
 
