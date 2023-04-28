@@ -1,5 +1,6 @@
 from pathlib import Path
 from flask import url_for
+from app.functions import search_term
 import os
 
 
@@ -129,15 +130,7 @@ class Folder:
         Returns:
             A list of File objects that match the term. The files are matched if the term is a substring, a prefix, or a suffix of their names (case-insensitive).
         """
-        result = []
-        for file in self.all_files:
-            if (
-                    term.lower() in file.name.lower()
-                    or file.name.lower().startswith(term.lower())
-                    or file.name.lower().endswith(term.lower())
-            ):
-                result.append(file)
-        return result
+        return search_term(term, self.all_files)
 
     def get_file_by_uid(self, uid: str):
         for file in self.all_files:

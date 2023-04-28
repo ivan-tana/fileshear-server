@@ -6,6 +6,7 @@ from pathlib import Path
 class Folder(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     path = database.Column(database.Text)
+    collection_id = database.Column(database.Integer, database.ForeignKey('collection.id'))
 
     @property
     def data(self):
