@@ -47,8 +47,8 @@ class Folder(Resource):
         """
         # create a parser object to parse the path argument
         folder_pars = reqparse.RequestParser()
-        folder_pars.add_argument("path")
-        folder_pars.add_argument("collection_id")
+        folder_pars.add_argument("path", required=True, help="path invalid")
+        folder_pars.add_argument("collection_id", required=True, help="collection_id invalid")
         args = folder_pars.parse_args()
 
         # convert the path argument to a Path object
@@ -133,3 +133,20 @@ class Collection(Resource):
         database.session.commit()
 
         return {"message": "collection Created"}
+
+
+class SearchCollections(Resource):
+    def get(self, term):
+        collections = CollectionM.query.all()
+        results = []
+        for collection_instance in collections:
+            results += collection_instance.search(term)
+        return results
+
+
+class SearchCollection(Resource):
+    def get(self, collection_id, term):
+        collection_query = CollectionM.query.get(collection_id)
+        if collection_query:
+            return collection_query.search(term)
+        return []

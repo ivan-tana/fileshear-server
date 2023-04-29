@@ -1,6 +1,7 @@
 from app.extensions import database
 from app.folder.folder import Folder as Folder_Class
 from pathlib import Path
+from .Collection import Collection
 
 
 class Folder(database.Model):
@@ -11,8 +12,12 @@ class Folder(database.Model):
     )
 
     @property
+    def allowed_extensions(self):
+        return Collection.query.get(self.collection_id).allowed_extensions
+
+    @property
     def data(self):
-        return Folder_Class(Path(self.path), self.id)
+        return Folder_Class(Path(self.path), self.id, self.allowed_extensions)
 
     @property
     def name(self):
@@ -29,10 +34,6 @@ class Folder(database.Model):
     @property
     def all_files(self):
         return self.data.all_files
-
-    @property
-    def allowed_extensions(self):
-        return self.data.allowed_extensions
 
     @property
     def dict(self):

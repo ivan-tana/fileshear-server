@@ -1,5 +1,5 @@
 from app.extensions import database
-from app.const import FileType, DEFUALT_PASSWORD
+from app.const import FileType, DEFUALT_PASSWORD, allowed_extensions as allowed_extensions_dict
 from app.functions import search_term
 from app.exceptions import InvalidPassword
 
@@ -10,14 +10,18 @@ class Collection(database.Model):
     thumbnail = database.Column(database.Text)
     name = database.Column(database.String(30), nullable=False)
     type = database.Column(database.Enum(FileType), nullable=False)
-    public = database.Column(database.Boolean(), default=False)
+    public = database.Column(database.Boolean(), default=True)
     folders = database.relationship("Folder", backref="collection", lazy=True)
+
+    @property
+    def allowed_extensions(self):
+        return allowed_extensions_dict[self.type.value]
 
     @property
     def all_files(self):
         files = []
         for folder_instance in self.folders:
-            files.append(folder_instance.all_files)
+            files += folder_instance.all_files
         return files
 
     def search(self, term: str) -> list:

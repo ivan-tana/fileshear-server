@@ -1,3 +1,4 @@
+
 def search_term(term: str, file_list: list) -> list:
     """Searches for files in the folder and its sub-folders that match the given term.
 
@@ -9,12 +10,12 @@ def search_term(term: str, file_list: list) -> list:
     Returns:
         A list of File objects that match the term. The files are matched if the term is a substring, a prefix, or a suffix of their names (case-insensitive).
     """
-    result = []
+    results = []
     for file in file_list:
         if (
-            term.lower() in file.name.lower()
-            or file.name.lower().startswith(term.lower())
-            or file.name.lower().endswith(term.lower())
+                term.lower() in file.name.lower()
+                or file.name.lower().startswith(term.lower())
+                or file.name.lower().endswith(term.lower())
         ):
-            result.append(file)
-    return result
+            results.append(file)
+    return [result.dict for result in results]
