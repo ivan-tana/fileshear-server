@@ -57,7 +57,7 @@ class Folder(Resource):
         # check if the path exists
         if path.exists() and collection:
             # create a FolderM object with the path as an attribute
-            new_folder = FolderM(path=str(path))
+            new_folder = FolderM(path=str(path), collection_id=collection.id)
             # add the folder to the database session
             database.session.add(new_folder)
             # commit the changes to the database
@@ -117,9 +117,9 @@ class Collection(Resource):
 
         name = args["name"]
         file_type = args["type"]
-        thumbnail = args["thumbnail"] | None
-        public = args["public"] | False
-        password = args["password"] | DEFUALT_PASSWORD
+        thumbnail = args["thumbnail"] or ''
+        public = args["public"] or False
+        password = args["password"] or DEFUALT_PASSWORD
 
         new_collection = CollectionM(
             name=name,

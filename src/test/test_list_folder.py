@@ -20,10 +20,10 @@ def app():
 
     # clean up / reset resources here
 
+
 @pytest.fixture()
 def test_list_folders(app, tmpdir: Path):
-
-# Create a temporary directory structure
+    # Create a temporary directory structure
 
     tmpdir.mkdir("folder1").join("file1.txt").write("content")
     tmpdir.mkdir("folder2").join("file2.txt").write("content")

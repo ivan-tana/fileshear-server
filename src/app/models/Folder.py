@@ -12,7 +12,7 @@ class Folder(database.Model):
 
     @property
     def data(self):
-        return Folder_Class(Path(self.path))
+        return Folder_Class(Path(self.path), self.id)
 
     @property
     def name(self):
@@ -38,6 +38,7 @@ class Folder(database.Model):
     def dict(self):
         return {
             "name": self.name,
+            "file_count": len(self.all_files),
             "files": [file.dict for file in self.files],
             "all_files": [file.dict for file in self.all_files],
             "folders": [folder_instance.dict for folder_instance in self.folders],

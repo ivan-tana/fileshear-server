@@ -14,7 +14,7 @@ class File:
          the name of the file, including the extension.
     """
 
-    def __init__(self, path: Path) -> None:
+    def __init__(self, path: Path, folder_id: None) -> None:
         """Initializes a File object with the given path.
 
         Args:
@@ -22,6 +22,7 @@ class File:
              the absolute or relative path of the file.
         """
         self.path = path
+        self.folder_id = folder_id
         self.parent = path.parent
         self.name = self.path.name
         self.icon = get_icon(self.path.suffix)
@@ -58,6 +59,8 @@ class File:
             "icon": self.icon,
             "size": self.size,
             "uid": self.uid,
+            "url": url_for("get_resources.file", folder_id=self.folder_id, uid=self.uid)
+
         }
 
 
@@ -82,7 +85,7 @@ class Folder:
 
     """
 
-    def __init__(self, path: Path, allowed_extensions: list[str] = None) -> None:
+    def __init__(self, path: Path, folder_id=None, allowed_extensions: list[str] = None) -> None:
         """Initializes a Folder object with the given path and optional allowed extensions.
 
         Args:
@@ -96,8 +99,9 @@ class Folder:
             raise FileExistsError
         self.name = self.path.name
         self.allowed_extensions = allowed_extensions
-        self.folders = list_folders(self.path, self.allowed_extensions)
-        self.files = list_files(self.path, self.allowed_extensions)
+        self.folder_id = folder_id
+        self.folders = list_folders(self.path, folder_id, self.allowed_extensions)
+        self.files = list_files(self.path,self.folder_id, self.allowed_extensions)
         self.all_files = all_folder_files(self)
 
     def __repr__(self):
@@ -135,7 +139,6 @@ class Folder:
     def get_file_by_uid(self, uid: str):
         for file in self.all_files:
             if file.uid == uid:
-
                 return file
         return None
 
@@ -150,7 +153,7 @@ class Folder:
         }
 
 
-def list_folders(path: Path, allowed_extension: list[str]) -> list[Folder]:
+def list_folders(path: Path, folder_id, allowed_extension: list[str]) -> list[Folder]:
     """Lists all the sub-folders of a given path and creates Folder objects for them.
 
     Args:
@@ -158,16 +161,16 @@ def list_folders(path: Path, allowed_extension: list[str]) -> list[Folder]:
          the absolute or relative path of the folder to list.
         allowed_extension: A list of strings that contain
          the file extensions that are allowed in the sub-folders.
-
+        folder_id:
     Returns:
         A list of Folder objects that represent the sub-folders of the given path.
     """
 
     folder_list = []
     for (
-        path,
-        folders,
-        files,
+            path,
+            folders,
+            files,
     ) in os.walk(path):
         [
             folder_list.append({"name": folder_item, "path": path})
@@ -175,7 +178,7 @@ def list_folders(path: Path, allowed_extension: list[str]) -> list[Folder]:
         ]
 
     return [
-        Folder(Path(folder_path["path"], folder_path["name"]), allowed_extension)
+        Folder(Path(folder_path["path"], folder_path["name"]), folder_id, allowed_extension)
         for folder_path in folder_list
     ]
 
@@ -204,7 +207,7 @@ def all_folder_files(folder_item: Folder) -> list[File]:
     return files
 
 
-def list_files(path: Path, allowed_extensions: list[str] = None) -> list[File]:
+def list_files(path: Path, folder_id, allowed_extensions: list[str] = None) -> list[File]:
     """
     Returns a list of files in a given path that match the allowed extensions.
 
@@ -214,6 +217,7 @@ def list_files(path: Path, allowed_extensions: list[str] = None) -> list[File]:
         The path to search for files.
     allowed_extensions : list[str], optional
         A list of file extensions to filter by. If None, all files are returned. (default is None)
+    folder_id:
 
     Returns
     -------
@@ -231,9 +235,9 @@ def list_files(path: Path, allowed_extensions: list[str] = None) -> list[File]:
 
     for file in path.iterdir():  # use iterdir instead of listdir for better performance
         if file.is_file() and (
-            allowed_extensions is None or file.suffix in allowed_extensions
+                allowed_extensions is None or file.suffix in allowed_extensions
         ):
-            file_list.append(File(file))
+            file_list.append(File(file, folder_id))
 
     return file_list
 

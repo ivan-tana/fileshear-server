@@ -26,6 +26,7 @@ class Collection(database.Model):
     @property
     def dict(self):
         return {
+            "id": self.id,
             "type": self.type.value,
             "public": self.public,
             "name": self.name,

@@ -14,5 +14,5 @@ folder_api = Api(folder)
 
 # register resources
 folder_api.add_resource(resources.Folder, "/folder")
-folder_api.add_resource(resources.SingleFolder, "/<folder_id>")
+folder_api.add_resource(resources.SingleFolder, "/folder/<folder_id>")
 folder_api.add_resource(resources.Collection, "/")
