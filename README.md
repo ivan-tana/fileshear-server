@@ -1,6 +1,66 @@
 [![Makefile CI](https://github.com/ivan-tana/fileshear-server/actions/workflows/makefile.yml/badge.svg)](https://github.com/ivan-tana/fileshear-server/actions/workflows/makefile.yml)
 
-# fileshear-server
+# FileShear Rest Api
+
+## Rest api routes
+
+The following are the various routes available in the api, their functions and how to use them
+
+## create a new collection
+send a post request to `/api/collection`
+
+**Example**: To create a collection an image collection called art 
+```json
+{
+    "name": "art",
+    "type":2,
+    "public": false,
+    "password": "1234567809",
+    "thumbnail": "E:videos/thumbnail.png"
+}
+```
+
+The `name` and `type` are required when creating a new collection the others can be left out
+```json
+{
+  "name": "art",
+  "type": 2
+}
+```
+if the creation is successful 
+```json
+{"message": "collection Created", "collection_id": 1}
+```
+the response status code will be 500 and the responce json
+```json
+{"message": "failed to create collection"} 
+```
+
+**Note**: post, get and delete request can only be sent with localhost ip
+
+## view collection
+Send a get request to `/api/collection` to get a list of the collections available
+
+**Example**: 
+
+```json
+[
+    {
+        "id": 1,
+        "type": 2,
+        "public": false,
+        "name": "art",
+        "thumbnail": "E:videos/thumbnail.png",
+        "folders": []
+    }
+]
+
+```
+
+view a spacific collection by sending a get request to `/api/collection/<collection_id>` eg `/api/collection/1`
+
+## Delete collection
+send a delete request to `api/collection/<collection_id>`
 
 ## Folder API Resource
 This is an API resource class that handles the creation and retrieval of folders in the database. It has two methods: post and get.

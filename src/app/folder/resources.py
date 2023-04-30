@@ -145,7 +145,7 @@ class Collections(Resource):
             database.session.add(new_collection)
             database.session.commit()
 
-            return {"message": "collection Created"}
+            return {"message": "collection Created", "collection_id": new_collection.id}
         except:
             return {"message": "failed to create collection"}, 500
 
@@ -181,7 +181,7 @@ class Collection(Resource):
         database.session.delete(collection_instance)
         database.session.commit()
         return {
-            "message": "collection deleted"
+            "message": "collection deleted",
         }
 
 
