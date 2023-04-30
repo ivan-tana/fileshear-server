@@ -65,10 +65,10 @@ class Folder(database.Model):
 
 def pickle_folder(folder_instance, folder_id) -> None:
     print("pickling " + folder_instance.name)
-    with open(str(Path("./folder_pickle/", str(folder_id))) + ".cache", mode="wb") as fs:
+    with open(str(Path("./pickled_folders/", str(folder_id))) + ".pickle", mode="wb") as fs:
         pickle.dump(folder_instance, fs)
 
 
 def get_folder_pickle(folder_id):
-    with open(str(Path("./folder_pickle/", str(folder_id))) + ".cache", mode="rb") as fs:
+    with open(str(Path("./pickled_folders/", str(folder_id))) + ".pickle", mode="rb") as fs:
         return pickle.load(fs)
