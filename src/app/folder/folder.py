@@ -103,6 +103,7 @@ class Folder:
         self.folders = list_folders(self.path, folder_id, self.allowed_extensions)
         self.files = list_files(self.path,self.folder_id, self.allowed_extensions)
         self.all_files = all_folder_files(self)
+        self.last_mTime = os.stat(self.path).st_mtime
 
     def __repr__(self):
         """Returns a string representation of the Folder object.

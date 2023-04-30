@@ -2,6 +2,8 @@ from app.extensions import database
 from app.folder.folder import Folder as Folder_Class
 from pathlib import Path
 from .Collection import Collection
+import pickle
+import os
 
 
 class Folder(database.Model):
@@ -17,7 +19,16 @@ class Folder(database.Model):
 
     @property
     def data(self):
-        return Folder_Class(Path(self.path), self.id, self.allowed_extensions)
+
+        try:
+
+            folder_instance = get_folder_pickle(self.id)
+            if folder_instance.last_mTime != os.stat(self.path).st_mtime:
+                raise FileNotFoundError
+        except FileNotFoundError:
+            folder_instance = Folder_Class(Path(self.path), self.id, self.allowed_extensions)
+            pickle_folder(folder_instance, self.id)
+        return folder_instance
 
     @property
     def name(self):
@@ -50,3 +61,14 @@ class Folder(database.Model):
 
     def get_file_by_uid(self, uid):
         return self.data.get_file_by_uid(uid)
+
+
+def pickle_folder(folder_instance, folder_id) -> None:
+    print("pickling " + folder_instance.name)
+    with open(str(Path("./folder_pickle/", str(folder_id))) + ".pickle", mode="wb") as fs:
+        pickle.dump(folder_instance, fs)
+
+
+def get_folder_pickle(folder_id):
+    with open(str(Path("./folder_pickle/", str(folder_id))) + ".pickle", mode="rb") as fs:
+        return pickle.load(fs)
