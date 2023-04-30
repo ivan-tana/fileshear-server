@@ -8,7 +8,7 @@ class Collection(database.Model):
     id = database.Column(database.Integer, primary_key=True)
     password = database.Column(database.Text, default=DEFUALT_PASSWORD)
     thumbnail = database.Column(database.Text)
-    name = database.Column(database.String(30), nullable=False)
+    name = database.Column(database.String(30), nullable=False, unique=True)
     type = database.Column(database.Enum(FileType), nullable=False)
     public = database.Column(database.Boolean(), default=True)
     folders = database.relationship("Folder", backref="collection", lazy=True)

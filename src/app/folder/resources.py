@@ -1,9 +1,14 @@
 from flask_restful import Resource, reqparse
+from flask import request
 from pathlib import Path
 from app.models.Folder import Folder as FolderM
 from app.models.Collection import Collection as CollectionM
 from app.extensions import database
 from app.const import FileType, DEFUALT_PASSWORD
+
+
+def is_local():
+    return "localhost" in str(request.root_url) or "127.0.0" in str(request.root_url)
 
 
 class Folder(Resource):
@@ -35,6 +40,7 @@ class Folder(Resource):
         return context
 
     def post(self):
+
         """
         This method creates a new folder in the database and returns the names of the files in it.
 
@@ -45,6 +51,8 @@ class Folder(Resource):
         Returns:
         - a dictionary with a key 'path' and a value that is a list of file names in the folder
         """
+        if not is_local():
+            return {"message": "request not allowed"}, 500
         # create a parser object to parse the path argument
         folder_pars = reqparse.RequestParser()
         folder_pars.add_argument("path", required=True, help="path invalid")
@@ -76,6 +84,8 @@ class SingleFolder(Resource):
         return {"message": "folder not found"}, 400
 
     def delete(self, folder_id):
+        if not is_local():
+            return {"message": "request not allowed"}, 500
         """
         delete folder
         """
@@ -84,11 +94,12 @@ class SingleFolder(Resource):
             database.session.delete(folder_instance)
             database.session.commit()
             return {"message": "folder deleted"}
-        return {"message": "folder dose not exist"}
+        return {"message": "folder dose not exist"}, 404
 
 
-class Collection(Resource):
+class Collections(Resource):
     def get(self):
+
         results = []
         collections = CollectionM.query.all()
         for collection_instance in collections:
@@ -96,6 +107,8 @@ class Collection(Resource):
         return results
 
     def post(self):
+        if not is_local():
+            return {"message": "request not allowed"}, 500
         collection_parser = reqparse.RequestParser()
         collection_parser.add_argument(
             "name", required=True, help="name invalid", type=str
@@ -120,19 +133,21 @@ class Collection(Resource):
         thumbnail = args["thumbnail"] or ''
         public = args["public"] or False
         password = args["password"] or DEFUALT_PASSWORD
+        try:
+            new_collection = CollectionM(
+                name=name,
+                type=FileType(file_type),
+                thumbnail=thumbnail,
+                public=public,
+                password=password,
+            )
 
-        new_collection = CollectionM(
-            name=name,
-            type=FileType(file_type),
-            thumbnail=thumbnail,
-            public=public,
-            password=password,
-        )
+            database.session.add(new_collection)
+            database.session.commit()
 
-        database.session.add(new_collection)
-        database.session.commit()
-
-        return {"message": "collection Created"}
+            return {"message": "collection Created"}
+        except:
+            return {"message": "failed to create collection"}, 500
 
 
 class SearchCollections(Resource):
@@ -150,3 +165,34 @@ class SearchCollection(Resource):
         if collection_query:
             return collection_query.search(term)
         return []
+
+
+class Collection(Resource):
+    def get(self, collection_id):
+        collection_instance = CollectionM.query.get(collection_id)
+        if collection_instance:
+            return collection_instance.dict
+        return {"massage": "collection not found"}, 404
+
+    def delete(self, collection_id):
+        if not is_local():
+            return {"message": "request not allowed"}, 500
+        collection_instance = CollectionM.query.get(collection_id)
+        database.session.delete(collection_instance)
+        database.session.commit()
+        return {
+            "message": "collection deleted"
+        }
+
+
+class Summary(Resource):
+    def get(self):
+        collections = CollectionM.query.all()
+        folders = FolderM.query.all()
+
+        return {
+            "collection_count": len(collections),
+            "folder_count": len(folders),
+            "collections": [collection.name for collection in collections],
+            "collection_types": [{collection.name: collection.type.value} for collection in collections]
+        }
