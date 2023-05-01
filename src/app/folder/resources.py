@@ -197,7 +197,7 @@ class Collection(Resource):
 class Summary(Resource):
     def get(self):
         collections = CollectionM.query.all()
-        folders = FolderM.query.all()
+        folders = get_existing_folders(FolderM)
 
         return {
             "collection_count": len(collections),

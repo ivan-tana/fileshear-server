@@ -14,7 +14,9 @@ def create_app(config_file: str = "config_flask_app.py") -> Flask:
     create app
     """
     app = Flask(__name__)
-    app.config.from_pyfile(config_file)
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
+    app.config['SQLALCHEMY_DATABASE_TRACK_MODIFICATION'] = False
+    app.config['SECRET_KEY '] = "this is a secret"
 
     # register blueprints
     for blueprint in blueprints:

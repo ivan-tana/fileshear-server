@@ -234,7 +234,7 @@ def list_files(path: Path, folder_id, allowed_extensions: list[str] = None) -> l
     FileExistsError
         If the path does not exist.
     """
-    # file_list = []
+    file_list = []
     # if not path.exists():
     #     raise FileExistsError
 
