@@ -1,4 +1,3 @@
-
 def search_term(term: str, file_list: list) -> list:
     """Searches for files in the folder and its sub-folders that match the given term.
 
@@ -19,3 +18,12 @@ def search_term(term: str, file_list: list) -> list:
         ):
             results.append(file)
     return [result.dict for result in results]
+
+
+def get_existing_folders(FolderM):
+    results = []
+    folders = FolderM.query.all()
+    for folder in folders:
+        if folder.exist:
+            results.append(folder)
+    return results

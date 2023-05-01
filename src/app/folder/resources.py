@@ -3,6 +3,7 @@ from flask import request
 from pathlib import Path
 from app.models.Folder import Folder as FolderM
 from app.models.Collection import Collection as CollectionM
+from app.functions import get_existing_folders
 from app.extensions import database
 from app.const import FileType, DEFUALT_PASSWORD
 
@@ -31,7 +32,7 @@ class Folder(Resource):
             - 'allowed_extension': a list of strings that are the allowed file extensions for the folder
         """
         # query all the folders in the database
-        folders = FolderM.query.all()
+        folders = get_existing_folders(FolderM)
 
         context = {
             "count": len(folders),
@@ -97,42 +98,48 @@ class SingleFolder(Resource):
         return {"message": "folder dose not exist"}, 404
 
 
+# This class defines a resource for collections
 class Collections(Resource):
+    # This method returns a list of all collections in the database
     def get(self):
 
-        results = []
-        collections = CollectionM.query.all()
-        for collection_instance in collections:
-            results.append(collection_instance.dict)
-        return results
+        results = []  # Initialize an empty list to store the results
+        collections = CollectionM.query.all()  # Query all collections from the database
+        for collection_instance in collections:  # Loop through each collection
+            results.append(
+                collection_instance.dict)  # Append the dictionary representation of the collection to the results list
+        return results  # Return the results list
 
+    # This method creates a new collection in the database
     def post(self):
-        if not is_local():
-            return {"message": "request not allowed"}, 500
-        collection_parser = reqparse.RequestParser()
+        if not is_local():  # Check if the request is local
+            return {"message": "request not allowed"}, 500  # If not, return an error message and status code 500
+        collection_parser = reqparse.RequestParser()  # Create a parser object to parse the request arguments
         collection_parser.add_argument(
             "name", required=True, help="name invalid", type=str
-        )
+        )  # Add an argument for the name of the collection, which is required and must be a string
         collection_parser.add_argument(
             "type", required=True, help="type invalid", type=int
-        )
+        )  # Add an argument for the type of the collection, which is required and must be an integer
         collection_parser.add_argument(
             "thumbnail", required=False, help="thumbnail invalid", type=str
-        )
+        )  # Add an argument for the thumbnail of the collection, which is optional and must be a string
         collection_parser.add_argument(
             "public", required=False, help="public invalid", type=bool
-        )
+        )  # Add an argument for the public status of the collection, which is optional and must be a boolean
         collection_parser.add_argument(
             "password", required=False, help="password invalid", type=str
-        )
+        )  # Add an argument for the password of the collection, which is optional and must be a string
 
-        args = collection_parser.parse_args()
+        args = collection_parser.parse_args()  # Parse the arguments from the request
 
-        name = args["name"]
-        file_type = args["type"]
-        thumbnail = args["thumbnail"] or ''
-        public = args["public"] or False
-        password = args["password"] or DEFUALT_PASSWORD
+        name = args["name"]  # Get the name from the arguments
+        file_type = args["type"]  # Get the type from the arguments
+        thumbnail = args["thumbnail"] or ''  # Get the thumbnail from the arguments or use an empty string as default
+        public = args["public"] or False  # Get the public status from the arguments or use False as default
+        password = args[
+                       "password"] or DEFUALT_PASSWORD  # Get the password from the arguments or use a default password as defined in a constant
+
         try:
             new_collection = CollectionM(
                 name=name,
@@ -140,14 +147,16 @@ class Collections(Resource):
                 thumbnail=thumbnail,
                 public=public,
                 password=password,
-            )
+            )  # Create a new collection object with the given attributes
 
-            database.session.add(new_collection)
-            database.session.commit()
+            database.session.add(new_collection)  # Add the new collection to the database session
+            database.session.commit()  # Commit the changes to the database
 
-            return {"message": "collection Created", "collection_id": new_collection.id}
+            return {"message": "collection Created",
+                    "collection_id": new_collection.id}  # Return a success message and the id of the new collection
         except:
-            return {"message": "failed to create collection"}, 500
+            return {
+                       "message": "failed to create collection"}, 500  # If an exception occurs, return an error message and status code 500
 
 
 class SearchCollections(Resource):

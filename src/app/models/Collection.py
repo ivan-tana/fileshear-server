@@ -18,9 +18,17 @@ class Collection(database.Model):
         return allowed_extensions_dict[self.type.value]
 
     @property
+    def existing_folders(self):
+        results = []
+        for folder in self.folders:
+            if folder.exist:
+                results.append(folder)
+        return results
+
+    @property
     def all_files(self):
         files = []
-        for folder_instance in self.folders:
+        for folder_instance in self.existing_folders:
             files += folder_instance.all_files
         return files
 
@@ -35,7 +43,7 @@ class Collection(database.Model):
             "public": self.public,
             "name": self.name,
             "thumbnail": self.thumbnail,
-            "folders": [folder_instance.dict for folder_instance in self.folders],
+            "folders": [folder_instance.dict for folder_instance in self.existing_folders],
         }
 
     def change_password(self, current_password: str, new_password: str):

@@ -14,46 +14,70 @@ class Folder(database.Model):
     )
 
     @property
+    def exist(self):
+        return Path(self.path).exists()
+
+    @property
+    def existing_folders(self):
+        results = []
+        for folder in self.folders:
+            if folder.exist:
+                results.append(folder)
+        return results
+
+    @property
     def allowed_extensions(self):
         return Collection.query.get(self.collection_id).allowed_extensions
 
     @property
     def data(self):
+        if self.exist:
+            try:
 
-        try:
+                folder_instance = get_folder_pickle(self.id)
+                if folder_instance.last_mTime != os.stat(self.path).st_mtime:
+                    raise FileNotFoundError
+            except FileNotFoundError:
 
-            folder_instance = get_folder_pickle(self.id)
-            if folder_instance.last_mTime != os.stat(self.path).st_mtime:
-                raise FileNotFoundError
-        except FileNotFoundError:
-            folder_instance = Folder_Class(Path(self.path), self.id, self.allowed_extensions)
-            pickle_folder(folder_instance, self.id)
-        return folder_instance
+                folder_instance = Folder_Class(Path(self.path), self.id, self.allowed_extensions)
+                pickle_folder(folder_instance, self.id)
+            return folder_instance
+        else:
+            return None
 
     @property
     def name(self):
-        return self.data.name
+        if self.data is not None:
+            return self.data.name
+        return ''
 
     @property
     def folders(self):
-        return self.data.folders
+        if self.data is not None:
+            return self.data.folders
+        return ''
 
     @property
     def files(self):
-        return self.data.files
+        if self.data is not None:
+            return self.data.files
+        return ''
 
     @property
     def all_files(self):
-        return self.data.all_files
+        if self.data is not None:
+            return self.data.all_files
+        return ''
 
     @property
     def dict(self):
         return {
             "name": self.name,
+            "exist": self.exist,
             "file_count": len(self.all_files),
             "files": [file.dict for file in self.files],
             "all_files": [file.dict for file in self.all_files],
-            "folders": [folder_instance.dict for folder_instance in self.folders],
+            "folders": [folder_instance.dict for folder_instance in self.existing_folders],
             "allowed_extension": self.allowed_extensions,
             "collection_id": self.collection_id,
             "id": self.id,

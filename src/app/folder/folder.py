@@ -125,6 +125,10 @@ class Folder:
         """
         return self.path == other.path and self.name == other.name
 
+    @property
+    def exist(self):
+        return Path(self.path).exists()
+
     def search(self, term) -> list[File]:
         """Searches for files in the folder and its sub-folders that match the given term.
 
@@ -230,9 +234,9 @@ def list_files(path: Path, folder_id, allowed_extensions: list[str] = None) -> l
     FileExistsError
         If the path does not exist.
     """
-    file_list = []
-    if not path.exists():
-        raise FileExistsError
+    # file_list = []
+    # if not path.exists():
+    #     raise FileExistsError
 
     for file in path.iterdir():  # use iterdir instead of listdir for better performance
         if file.is_file() and (
