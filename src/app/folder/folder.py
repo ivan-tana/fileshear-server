@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from flask import url_for
 from app.functions import search_term
 import os

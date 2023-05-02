@@ -89,4 +89,5 @@ a dictionary with two keys: ‘count’ and ‘folders’
   - ‘folders’: a list of dictionaries, each containing the attributes of a subfolder instance that belongs to the folder
   - ‘allowed_extension’: a list of strings that are the allowed file extensions for the folder
 
-pyinstaller  --add-data "app/get_resources/static;app\get_resources\static" --add-data "app\config_flask_app.py;app\config_flask_app.py" --onefile app.py
+
+

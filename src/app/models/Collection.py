@@ -11,7 +11,7 @@ class Collection(database.Model):
     name = database.Column(database.String(30), nullable=False, unique=True)
     type = database.Column(database.Enum(FileType), nullable=False)
     public = database.Column(database.Boolean(), default=True)
-    folders = database.relationship("Folder", backref="collection", lazy=True)
+    folders = database.relationship("Folder", cascade="all,delete", backref="collection", lazy=True)
 
     @property
     def allowed_extensions(self):
